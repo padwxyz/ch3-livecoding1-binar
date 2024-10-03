@@ -58,7 +58,41 @@ app.post("/api/v1/cars", (req, res) => {
         message: "Succes get cars data!",
         isSuccess: true,
         data: cars,
-      });
+    });
+});
+
+app.get("/api/v1/cars/:id", (req, res) => {
+    // select * from .....
+    const id = req.params.id * 1;
+    console.log("typeof id: ");
+    console.log(id);
+    // console.log(typeof id);
+
+    // == maka tidak peduli tipe datanya apa, kalau sama "10"  == 10 = TRUE
+    // === jika 10 === "10" = FALSE, karena tipe ddata berbeda
+
+    const car = cars.find((i) => i.id === id);
+    console.log(car);
+
+    // basic error handling
+    if (!car) {
+        console.log("data kosong cuy")
+        return res.status(404).json({
+            status: "Filed",
+            message: `Filed get cars data from this id: ${id}`,
+            IsSuccess: false,
+            data: null,
+        });
+    }
+
+    res.status(200).json({
+        status: "success",
+        message: "Success get cars data!",
+        IsSuccess: true,
+        data: {
+            car,
+        },
+    });
 });
 
 // middleware / handler untuk url yang tidak dapat diakses
