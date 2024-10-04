@@ -95,6 +95,91 @@ app.get("/api/v1/cars/:id", (req, res) => {
     });
 });
 
+app.patch("/api/v1/cars/:id", (req, res) => {
+    const id = req.params.id * 1;
+    // UPDATE .... from (table) WHERE id=req.params.id
+    // object destructuring
+    // mencari data by id
+    const car = cars.find((i) => i.id === id);
+
+    // mencari indexnya
+    const carIndex = cars.findIndex((car) => car.id === id)
+
+    // update sesuai request body
+    // object assign = menggunakan object untuk spread operator
+    cars[carIndex] = { ...cars[carIndex], ...req.body };
+
+    // error handling
+    if (!car) {
+        console.log("data kosong cuy")
+        return res.status(404).json({
+            status: "Filed",
+            message: `Filed get cars data from this id: ${id}`,
+            IsSuccess: false,
+            data: null,
+        });
+    }
+
+    console.log(cars);
+
+    // get new data dor response api
+    const newCar = cars.find((i) => i.id === id);
+
+    // masukan atau rewrite data JSON dalam file
+    fs.writeFile(`${__dirname}/assets/data/cars.json`, JSON.stringify(cars), (err) => {
+        res.status(201).json({
+            status: "Success",
+            message: `Success update cars data from id: ${id}`,
+            isSuccess: true,
+            data: {
+                newCar,
+            },
+        });
+    });
+});
+
+app.delete("/api/v1/cars/:id", (req, res) => {
+    const id = req.params.id * 1;
+    // UPDATE .... from (table) WHERE id=req.params.id
+    // object destructuring
+    // mencari data by id
+    const car = cars.find((i) => i.id === id);
+
+    // mencari indexnya
+    const carIndex = cars.findIndex((car) => car.id === id)
+
+    // update sesuai request body
+    // object assign = menggunakan object untuk spread operator
+    cars[carIndex] = { ...cars[carIndex], ...req.body };
+
+    // error handling
+    if (!car) {
+        console.log("data kosong cuy")
+        return res.status(404).json({
+            status: "Filed",
+            message: `Filed to delete cars data from this id: ${id}`,
+            IsSuccess: false,
+            data: null,
+        });
+    }
+
+    // melakukan penghapusan data sesuai indexnya = req.params.id
+    cars.splice(carIndex, 1);
+
+    // masukan atau rewrite data JSON dalam file
+    fs.writeFile(`${__dirname}/assets/data/cars.json`, JSON.stringify(cars), (err) => {
+        res.status(200).json({
+            status: "Success",
+            message: `Success delete cars data from this id: ${id}`,
+            isSuccess: true,
+            data: {
+                car,
+            },
+        });
+    });
+
+})
+
 // middleware / handler untuk url yang tidak dapat diakses
 // middleware = our own middleware
 app.use((req, res, next) => {
